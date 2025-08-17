@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CMD Portfolio — Anass Ait Belagouim</title>
+    <style>
+      :root {
+        --bg: #0b0f10;
+        --green: #00ff88;
+        --green-dim: #14b86d;
+        --white: #e6f1e8;
+        --white-dim: #93a39a;
+        --shadow: 0 0 24px rgba(0, 255, 136, 0.12);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--green);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", monospace;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      a {
+        color: var(--white);
+        text-decoration: none;
+        border-bottom: 1px dotted var(--white-dim);
+      }
+      a:hover {
+        border-bottom-color: var(--white);
+      }
+      .wrap {
+        max-width: 1150px;
+        margin: auto;
+        padding: 20px;
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 1fr;
+      }
+      .chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 10px;
+        direction: ltr;
+      }
+      .chip {
+        border: 1px solid var(--white-dim);
+        color: var(--white);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.1s;
+      }
+      .chip:hover {
+        transform: translateY(-1px);
+      }
+      .terminal {
+        direction: ltr;
+      }
+      .term-window {
+        border: 1px solid #123026;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        background: linear-gradient(180deg, #0c1210, #0a100e 60%);
+        display: flex;
+        flex-direction: column;
+        min-height: 520px;
+      }
+      .term-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-bottom: 1px solid #143428;
+        background: #0f1513;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .dot.red {
+        background: #ff5f56;
+      }
+      .dot.yellow {
+        background: #ffbd2e;
+      }
+      .dot.green {
+        background: #27c93f;
+      }
+      .title {
+        margin-inline-start: 6px;
+        color: var(--white-dim);
+        font-size: 12px;
+      }
+      .screen {
+        flex: 1;
+        overflow: auto;
+        padding: 16px;
+        line-height: 1.6;
+        scrollbar-width: thin;
+        scrollbar-color: var(--green) #0f1513;
+      }
+      .line {
+        white-space: pre-wrap;
+        color: var(--green);
+      }
+      .line.error {
+        color: #ff7a7a;
+      }
+      .line.muted {
+        color: var(--white-dim);
+      }
+      .line.cmd {
+        color: var(--white);
+      }
+      .input-area {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border-top: 1px solid #143428;
+      }
+      .prompt {
+        color: var(--green-dim);
+      }
+      #cmd {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--green);
+        caret-color: var(--green);
+        font: inherit;
+      }
+      .invert-theme {
+        filter: invert(1) hue-rotate(180deg);
+      }
+      ::selection {
+        background: rgba(0, 255, 136, 0.25);
+      }
+      /* QR block */
+      .qr-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        margin-top: 8px;
+      }
+      .qr {
+        background: #0f1513;
+        border: 1px solid #143428;
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+      }
+      .qr img {
+        width: 140px;
+        height: 140px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 8px;
+      }
+      .qr figcaption {
+        color: var(--white-dim);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="terminal">
+        <div class="chips" aria-label="Quick commands">
+          <div class="chip" data-cmd="help">help</div>
+          <div class="chip" data-cmd="about">about</div>
+          <div class="chip" data-cmd="skills">skills</div>
+          <div class="chip" data-cmd="projects">projects</div>
+          <div class="chip" data-cmd="timeline">timeline</div>
+          <div class="chip" data-cmd="services">services</div>
+          <div class="chip" data-cmd="contact">contact</div>
+          <div class="chip" data-cmd="qr">qr</div>
+          <div class="chip" data-cmd="book">book</div>
+          <div class="chip" data-cmd="cv">cv</div>
+          <div class="chip" data-cmd="ls">ls</div>
+          <div class="chip" data-cmd="clear">clear</div>
+        </div>
+
+        <div class="term-window" role="application" aria-label="Terminal portfolio">
+          <div class="term-bar">
+            <span class="dot red"></span><span class="dot yellow"></span
+            ><span class="dot green"></span>
+            <span class="title">visitor@portfolio:~</span>
+          </div>
+          <div id="screen" class="screen" aria-live="polite" aria-atomic="false"></div>
+          <div class="input-area">
+            <span class="prompt">visitor@you:~$</span>
+            <input
+              id="cmd"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Type a command, e.g., help"
+            />
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // =====================
+      // CONFIG / PROFILE DATA
+      // =====================
+      const DATA = {
+        name: "Anass Ait Belagouim",
+        role: "Développeur Full-Stack",
+        location: "Ida Ou Gailal, Taroudant, Morocco",
+        email: "anassaitbelagouim@gmail.com",
+        phone: "+212 762-919926",
+        socials: {
+          // TODO: Remplace ces liens par tes vrais profils
+          github: "#",
+          linkedin: "#",
+          website: "#",
+        },
+        colors: {
+          green: "#00ff88",
+        },
+        summary:
+          "Développeur Full-Stack motivé, spécialisé dans les applications web modernes et performantes. Maîtrise du front-end (HTML, CSS, Bootstrap, Tailwind, JavaScript) et du back-end (Python, PHP, SQL/MySQL). Expérience freelance avec plus de 10 projets réels.",
+        skills: [
+          "HTML5",
+          "CSS3",
+          "Bootstrap",
+          "Tailwind CSS",
+          "JavaScript (ES6+)",
+          "PHP 8",
+          "Python 3",
+          "SQL",
+          "MySQL",
+          "Git",
+          "GitHub",
+          "REST API",
+          "Responsive Design",
+          "Figma",
+          "Outils Microsoft",
+        ],
+        projects: [
+          {
+            name: "E‑commerce local",
+            desc:
+              "Boutique en ligne (catalogue, panier, paiement). Stack: PHP/MySQL + Tailwind.",
+            link: "#",
+          },
+          {
+            name: "Gestion interne",
+            desc:
+              "App de gestion (stocks, factures, permissions). Stack: Python/Flask + MySQL.",
+            link: "#",
+          },
+          {
+            name: "Site vitrine PME",
+            desc:
+              "Vitrine responsive SEO-ready. Stack: HTML/CSS/JS + Bootstrap.",
+            link: "#",
+          },
+        ],
+        timeline: [
+          {
+            date: "2024 – Présent",
+            title: "Développeur Web Freelance",
+            note: "+10 projets (e‑commerce, gestion, vitrines, plateformes internes).",
+          },
+          {
+            date: "2024 – 2025",
+            title: "Technicien Spécialisé en Développement Digital",
+            note: "CMC Laâyoune – OFPPT (HTML, CSS, JS, Python, PHP, MySQL, frameworks).",
+          },
+          {
+            date: "2023 – 2024",
+            title: "Licence – Génie Informatique (1 année)",
+            note: "Université Ibn Zohr – Taroudant (Algorithmique, Logique, Python).",
+          },
+        ],
+        services: [
+          "Développement Web (Front/Back)",
+          "APIs, Auth & Paiements",
+          "UI/UX & Prototypage (Figma)",
+          "Déploiement & Monitoring (Docker, CI/CD)",
+        ],
+        langs: [
+          "Arabe : Langue maternelle",
+          "Amazighe : Langue maternelle",
+          "Français : Courant",
+          "Anglais : Intermédiaire",
+        ],
+        cv: "assets/CV.pdf",
+        qr: {
+          github: "assets/github-qr.svg",
+          portfolio: "assets/portfolio-qr.svg",
+          linkedin: "assets/linkedin-qr.svg",
+        },
+      };
+
+      // Apply theme color
+      document.documentElement.style.setProperty(
+        "--green",
+        DATA.colors.green || "#00ff88"
+      );
+
+      const $screen = document.getElementById("screen");
+      const $input = document.getElementById("cmd");
+
+      const HISTORY = [];
+      let HI_POS = 0;
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      // ============
+      // RENDER HELPERS
+      // ============
+      function mkLine(text = "", cls) {
+        const div = document.createElement("div");
+        div.className = "line" + (cls ? " " + cls : "");
+        div.textContent = text || "";
+        $screen.appendChild(div);
+        $screen.scrollTop = $screen.scrollHeight;
+        return div;
+      }
+      function mkHtml(html = "", cls) {
+        const div = document.createElement("div");
+        div.className = "line" + (cls ? " " + cls : "");
+        div.innerHTML = html || "";
+        $screen.appendChild(div);
+        $screen.scrollTop = $screen.scrollHeight;
+        return div;
+      }
+      function typeText(el, text) {
+        return new Promise((res) => {
+          let i = 0;
+          (function t() {
+            el.textContent += text.charAt(i++);
+            $screen.scrollTop = $screen.scrollHeight;
+            if (i < text.length) requestAnimationFrame(t);
+            else res();
+          })();
+        });
+      }
+      async function print(text, cls) {
+        const line = mkLine("", cls);
+        await typeText(line, String(text));
+      }
+      async function printHTML(html, cls) {
+        mkHtml(html, cls);
+      }
+      async function printLines(lines, delay = 10) {
+        for (const l of lines) {
+          if (typeof l === "string") {
+            await print(l);
+          } else if (l && l.type === "html") {
+            await printHTML(l.html, l.cls);
+          }
+          await sleep(delay);
+        }
+      }
+
+      async function banner() {
+        await print("Terminal Portfolio — type 'help' to start", "muted");
+        await print("hint: try 'help'", "muted");
+      }
+
+      // =========
+      // FILES API
+      // =========
+      const FILES = {
+        "about.txt": () => [
+          `${DATA.name} — ${DATA.role}`,
+          `Basé à ${DATA.location}.`,
+          `Résumé: ${DATA.summary}`,
+          "",
+          "Langues:",
+          ...DATA.langs.map((s) => `• ${s}`),
+          "",
+          `Site: ${DATA.socials.website !== "#" ? DATA.socials.website : "(à définir)"}`,
+        ],
+        "contact.txt": () => [
+          `Email: ${DATA.email}`,
+          `Téléphone: ${DATA.phone}`,
+          `GitHub: ${DATA.socials.github !== "#" ? DATA.socials.github : "(à définir)"}`,
+          `LinkedIn: ${DATA.socials.linkedin !== "#" ? DATA.socials.linkedin : "(à définir)"}`,
+        ],
+        "skills.txt": () => ["Compétences:", ...DATA.skills.map((s) => `• ${s}`)],
+        "services.txt": () => ["Services:", ...DATA.services.map((s) => `• ${s}`)],
+        "timeline.txt": () => [
+          "Parcours:",
+          ...DATA.timeline.map((t) => `• ${t.date} — ${t.title}: ${t.note}`),
+        ],
+        "languages.txt": () => ["Langues:", ...DATA.langs.map((s) => `• ${s}`)],
+      };
+
+      // ============
+      // COMMANDS API
+      // ============
+      const COMMANDS = {
+        async help() {
+          return [
+            "Available commands:",
+            "- about",
+            "- skills",
+            "- projects",
+            "- services",
+            "- timeline",
+            "- contact",
+            "- qr",
+            "- cv",
+            "- book",
+            "- ls",
+            "- open <file>",
+            "- ascii",
+            "- clear",
+          ];
+        },
+        async about() {
+          return FILES["about.txt"]();
+        },
+        async skills() {
+          return FILES["skills.txt"]();
+        },
+        async services() {
+          return FILES["services.txt"]();
+        },
+        async timeline() {
+          return FILES["timeline.txt"]();
+        },
+        async projects() {
+          const out = ["Projects:"];
+          DATA.projects.forEach((p, i) => {
+            out.push(`${i + 1}. ${p.name} — ${p.desc}`);
+            if (p.link) out.push(` ↳ ${p.link}`);
+          });
+          return out;
+        },
+        async contact() {
+          // make links clickable via HTML lines
+          return [
+            { type: "html", html: `<strong>Email:</strong> <a href="mailto:${DATA.email}">${DATA.email}</a>` },
+            { type: "html", html: `<strong>Téléphone:</strong> <a href="tel:${DATA.phone}">${DATA.phone}</a>` },
+            { type: "html", html: `<strong>GitHub:</strong> ${DATA.socials.github !== "#" ? `<a href="${DATA.socials.github}" target="_blank" rel="noopener">${DATA.socials.github}</a>` : "(à définir)"}` },
+            { type: "html", html: `<strong>LinkedIn:</strong> ${DATA.socials.linkedin !== "#" ? `<a href="${DATA.socials.linkedin}" target="_blank" rel="noopener">${DATA.socials.linkedin}</a>` : "(à définir)"}` },
+            { type: "html", html: `<strong>Site:</strong> ${DATA.socials.website !== "#" ? `<a href="${DATA.socials.website}" target="_blank" rel="noopener">${DATA.socials.website}</a>` : "(à définir)"}` },
+          ];
+        },
+        async qr() {
+          return [
+            "QR Codes (scan to connect):",
+            {
+              type: "html",
+              html: `
+              <div class="qr-grid">
+                <figure class="qr">
+                  <img src="${DATA.qr.github}" alt="GitHub QR" />
+                  <figcaption>GitHub</figcaption>
+                </figure>
+                <figure class="qr">
+                  <img src="${DATA.qr.portfolio}" alt="Portfolio QR" />
+                  <figcaption>Portfolio</figcaption>
+                </figure>
+                <figure class="qr">
+                  <img src="${DATA.qr.linkedin}" alt="LinkedIn QR" />
+                  <figcaption>LinkedIn</figcaption>
+                </figure>
+              </div>`,
+            },
+          ];
+        },
+        async cv() {
+          return [
+            DATA.cv
+              ? { type: "html", html: `Télécharger: <a href="${DATA.cv}" target="_blank" rel="noopener">CV.pdf</a>` }
+              : "Aucun CV lié",
+          ];
+        },
+        async book() {
+          alert("[booking] modal opened (demo)");
+          return ["[booking] modal opened."];
+        },
+        async ls() {
+          return Object.keys(FILES).map((n) => "• " + n);
+        },
+        async open(args) {
+          const f = (args && args[0]) || "";
+          if (FILES[f]) return FILES[f]();
+          return [`No such file: ${f}`];
+        },
+        async ascii() {
+          return [
+            " ___ _ _ _ ",
+            " / _ \\ ___| | ___(_) |_ ___ _ __",
+            "| | | |/ __| |/ _ \\ | __/ _ \\ '__|",
+            "| |_| | (__| | __/ | || __/ |",
+            " \\___/ \\___|_|\\___|_|\\__\\___|_| ",
+            DATA.name,
+          ];
+        },
+        async clear() {
+          $screen.innerHTML = "";
+          return [];
+        },
+      };
+
+      async function run(inputRaw) {
+        const input = inputRaw.trim();
+        if (!input) return;
+        await print(`$ ${input}`, "cmd");
+        const parts = input.split(/\s+/);
+        const cmd = parts[0],
+          args = parts.slice(1);
+        const fn = COMMANDS[cmd];
+        if (fn) {
+          try {
+            const res = await fn(args);
+            if (Array.isArray(res) && res.length) await printLines(res);
+          } catch (err) {
+            await print("Error: " + err.message, "error");
+          }
+        } else await print(`Command not found: ${cmd}. Type 'help'.`, "error");
+      }
+
+      document
+        .querySelectorAll("[data-cmd]")
+        .forEach((el) =>
+          el.addEventListener("click", () => {
+            $input.value = el.dataset.cmd;
+            $input.focus();
+          })
+        );
+
+      $input.addEventListener("keydown", async (e) => {
+        if (e.key === "Enter") {
+          const v = $input.value;
+          if (!v.trim()) return;
+          HISTORY.push(v);
+          if (HISTORY.length > 50) HISTORY.shift();
+          HI_POS = HISTORY.length;
+          $input.value = "";
+          await run(v);
+        } else if (e.key === "ArrowUp") {
+          if (HI_POS > 0) {
+            HI_POS--;
+            $input.value = HISTORY[HI_POS] || "";
+            setTimeout(() => {
+              $input.setSelectionRange($input.value.length, $input.value.length);
+            }, 0);
+          }
+        } else if (e.key === "ArrowDown") {
+          if (HI_POS < HISTORY.length) {
+            HI_POS++;
+            $input.value = HISTORY[HI_POS] || "";
+            setTimeout(() => {
+              $input.setSelectionRange($input.value.length, $input.value.length);
+            }, 0);
+          }
+        } else if (e.key === "Tab") {
+          e.preventDefault();
+          const v = $input.value.trim();
+          if (!v) return;
+          const keys = Object.keys(COMMANDS);
+          const options = keys.filter((k) => k.startsWith(v));
+          if (options.length === 1) $input.value = options[0];
+          else if (options.length > 1)
+            print("Suggestions: " + options.join(", "), "muted");
+        }
+      });
+
+      (async () => {
+        await banner();
+      })();
+    </script>
+  </body>
+</html>
